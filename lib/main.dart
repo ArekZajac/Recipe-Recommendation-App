@@ -6,6 +6,8 @@ import './tracker.dart';
 import './profile.dart';
 import './recipeView.dart';
 
+// i hate flutter
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -15,7 +17,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  static const String _title = 'Flutter Code Sample';
+  static const String _title = 'Cookbook App';
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   @override
-  Widget build(BuildContext context) {
+  build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: const <BottomNavigationBarItem>[
@@ -62,11 +64,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           builder: (BuildContext context) {
             switch (index) {
               case 1:
-                return Recipes();
+                return Re();
               case 2:
-                return const Tracker();
+                return Tr();
               case 3:
-                return const Profile();
+                return Pr();
               default:
                 return const Home();
             }

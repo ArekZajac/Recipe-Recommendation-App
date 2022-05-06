@@ -5,14 +5,50 @@ import 'package:recipe_finder/recipeView.dart';
 import './recipeView.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pixabay_picker/pixabay_picker.dart';
+import 'package:pixabay_picker/model/pixabay_media.dart';
+import 'package:pixabay_picker/pixabay_api.dart';
 
 String currentPageTit = '';
 String currentPageIng = '';
 String currentPageRec = '';
 
-class Recipes extends StatelessWidget {
-  Recipes({Key? key}) : super(key: key);
+class Re extends StatefulWidget {
+  @override
+  Recipes createState() => new Recipes();
+}
+
+class Recipes extends State<Re> with AutomaticKeepAliveClientMixin<Re> {
+  @override
+  bool get wantKeepAlive => true;
+
   final ScrollController _firstController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  String searchText = '';
+
+  Future<Image> getImage(String request) async {
+    PixabayPicker api = PixabayPicker(
+        apiKey: '27123464-c543262efa624bc8ea01b275a', language: "en");
+
+    PixabayResponse? res = await api.api?.requestImagesWithKeyword(
+        keyword: request, resultsPerPage: 1, page: 1);
+
+    if (res != null && request != '') {
+      return Image.network(
+        res.hits.toString().substring(1, res.hits.toString().indexOf(' ')),
+        fit: BoxFit.cover,
+        width: 76,
+        height: 76,
+      );
+    } else {
+      return Image.network(
+        'https://upload.wikimedia.org/wikipedia/commons/b/b1/Missing-image-232x150.png',
+        fit: BoxFit.cover,
+        width: 76,
+        height: 76,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +62,11 @@ class Recipes extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: CupertinoSearchTextField(
+                      controller: _searchController,
                       onChanged: (String value) {
-                        print('The text has changed to: $value');
-                      },
-                      onSubmitted: (String value) {
-                        print('Submitted text: $value');
+                        setState(() {
+                          searchText = value;
+                        });
                       },
                     ),
                   ),
@@ -46,6 +82,7 @@ class Recipes extends StatelessWidget {
             SizedBox(
               height: 635,
               child: CupertinoScrollbar(
+                controller: _firstController,
                 isAlwaysShown: true,
                 child: StreamBuilder(
                   stream: FirebaseFirestore.instance
@@ -67,7 +104,8 @@ class Recipes extends StatelessWidget {
                               snapshot.data!.docs[index].get('title'),
                               snapshot.data!.docs[index].get('ingredients'),
                               snapshot.data!.docs[index].get('prereration'),
-                              date);
+                              date,
+                              snapshot.data!.docs[index].id);
                         }),
                       );
                     }
@@ -82,7 +120,7 @@ class Recipes extends StatelessWidget {
   }
 
   Widget recipeItem(BuildContext context, String outputTit, String outputIng,
-      String outputRec, DateTime time) {
+      String outputRec, DateTime time, String docID) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
       child: Stack(
@@ -104,14 +142,18 @@ class Recipes extends StatelessWidget {
             ),
           ),
           Row(
-            children: <Widget>[
+            children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
-                child: Image.asset(
-                  'assets/images/breakfast.jpg',
-                  fit: BoxFit.cover,
-                  width: 76,
-                  height: 76,
+                child: FutureBuilder(
+                  future: getImage(outputTit),
+                  builder: (BuildContext context, AsyncSnapshot<Image> image) {
+                    if (image.hasData) {
+                      return image.data as Widget;
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
               ),
               Expanded(
@@ -144,6 +186,7 @@ class Recipes extends StatelessWidget {
               ),
             ),
             onTap: () {
+              print('tapped');
               currentPageTit = outputTit;
               currentPageIng = outputIng;
               currentPageRec = outputRec;
@@ -152,6 +195,36 @@ class Recipes extends StatelessWidget {
                 CupertinoPageRoute(builder: (context) => const RecipeView()),
               );
             },
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: CupertinoButton(
+              child: const Icon(
+                CupertinoIcons.trash,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                print('activated');
+                showCupertinoDialog(
+                  context: context,
+                  builder: (BuildContext context) => CupertinoAlertDialog(
+                    title: const Text('Confirm'),
+                    actions: <Widget>[
+                      CupertinoDialogAction(
+                        child: const Text('ok'),
+                        onPressed: () {
+                          Navigator.pop(context, 'ok');
+                          FirebaseFirestore.instance
+                              .collection('myRecipes')
+                              .doc(docID)
+                              .delete();
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -175,13 +248,8 @@ class Recipes extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      CupertinoButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 0),
-                        child: const Text("Back"),
-                        onPressed: () {},
-                      ),
                       CupertinoButton(
                         padding: const EdgeInsets.symmetric(horizontal: 0),
                         child: const Text("Add"),

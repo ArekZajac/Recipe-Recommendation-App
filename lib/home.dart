@@ -1,21 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import './model/meal_plan_model.dart';
+import './services/api_service.dart';
+import 'recommender.dart';
+
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final Recommender recommender = Recommender.instance;
+    recommender.pantryRecommendation([]);
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            suggestionCard(context, "Breakfast",
-                const AssetImage('assets/images/breakfast.jpg')),
-            suggestionCard(
-                context, "Lunch", const AssetImage('assets/images/lunch.jpg')),
-            suggestionCard(context, "Dinner",
-                const AssetImage('assets/images/dinner.jpg')),
+            suggestionCard(context, recommender.rec1[0],
+                NetworkImage(recommender.rec1[1])),
+            suggestionCard(context, recommender.rec2[0],
+                NetworkImage(recommender.rec2[1])),
+            suggestionCard(context, recommender.rec3[0],
+                NetworkImage(recommender.rec3[1])),
           ],
         ),
       ),
@@ -23,7 +29,7 @@ class Home extends StatelessWidget {
   }
 
   Widget suggestionCard(
-      BuildContext context, String titleText, AssetImage coverImage) {
+      BuildContext context, String titleText, NetworkImage coverImage) {
     return CupertinoButton(
       child: Stack(
         children: [
@@ -67,20 +73,24 @@ class Home extends StatelessWidget {
         ],
       ),
       onPressed: () {
-        showCupertinoDialog(
-          context: context,
-          builder: (BuildContext context) => CupertinoAlertDialog(
-            title: Text(titleText + ' card is clicked.'),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: const Text('ok'),
-                onPressed: () {
-                  Navigator.pop(context, 'ok');
-                },
-              ),
-            ],
-          ),
-        );
+        // showCupertinoDialog(
+        //   context: context,
+        //   builder: (BuildContext context) => CupertinoAlertDialog(
+        //     title: Text(titleText + ' card is clicked.'),
+        //     actions: <Widget>[
+        //       CupertinoDialogAction(
+        //         child: const Text('ok'),
+        //         onPressed: () {
+        //           Navigator.pop(context, 'ok');
+        //         },
+        //       ),
+        //     ],
+        //   ),
+        // );
+
+        // recommender.createDataset();
+        final Recommender recommender = Recommender.instance;
+        print(recommender.pantryRecommendation([]));
       },
     );
   }

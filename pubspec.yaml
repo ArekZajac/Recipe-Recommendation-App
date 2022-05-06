@@ -37,6 +37,11 @@ dependencies:
   firebase_core: ^1.12.0
   cloud_firestore: ^3.1.8
   provider: ^6.0.2
+  smart_calendar: ^0.0.2
+  table_calendar: ^3.0.5
+  http: ^0.13.4
+  webview_flutter: ^3.0.2
+  pixabay_picker: ^1.0.6
 
 dev_dependencies:
   flutter_test:

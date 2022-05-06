@@ -8,8 +8,10 @@ class RecipeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar:
-          CupertinoNavigationBar(middle: Text(recipes.currentPageTit)),
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(recipes.currentPageTit),
+        trailing: Icon(CupertinoIcons.pencil),
+      ),
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
