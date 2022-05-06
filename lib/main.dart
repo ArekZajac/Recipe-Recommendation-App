@@ -5,12 +5,16 @@ import './recipes.dart';
 import './tracker.dart';
 import './profile.dart';
 import './recipeView.dart';
+import 'recommender.dart';
 
 // i hate flutter
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final Recommender recommender = Recommender();
+  await recommender.pantryRecommendation([]);
+  print(rec1);
   runApp(const MyApp());
 }
 

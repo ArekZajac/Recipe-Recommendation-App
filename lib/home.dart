@@ -4,24 +4,25 @@ import 'package:flutter/material.dart';
 import './model/meal_plan_model.dart';
 import './services/api_service.dart';
 import 'recommender.dart';
+import 'main.dart';
+
+List<dynamic> rec1 = [];
+List<dynamic> rec2 = [];
+List<dynamic> rec3 = [];
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final Recommender recommender = Recommender.instance;
-    recommender.pantryRecommendation([]);
+    print(rec1);
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            suggestionCard(context, recommender.rec1[0],
-                NetworkImage(recommender.rec1[1])),
-            suggestionCard(context, recommender.rec2[0],
-                NetworkImage(recommender.rec2[1])),
-            suggestionCard(context, recommender.rec3[0],
-                NetworkImage(recommender.rec3[1])),
+            suggestionCard(context, rec1[0], NetworkImage(rec1[1])),
+            suggestionCard(context, rec2[0], NetworkImage(rec2[1])),
+            suggestionCard(context, rec3[0], NetworkImage(rec3[1])),
           ],
         ),
       ),
@@ -89,8 +90,6 @@ class Home extends StatelessWidget {
         // );
 
         // recommender.createDataset();
-        final Recommender recommender = Recommender.instance;
-        print(recommender.pantryRecommendation([]));
       },
     );
   }

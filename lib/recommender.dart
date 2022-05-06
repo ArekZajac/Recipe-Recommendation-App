@@ -10,21 +10,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import '../model/meal_plan_model.dart';
 import '../model/recipe_model.dart';
+import 'main.dart';
 
 class Recommender {
-  Recommender._instantiate();
-  static final Recommender instance = Recommender._instantiate();
-
   final String _baseURL = "api.spoonacular.com";
   static const String API_KEY = "58d96d8e6c654ddfb8714f6f9b94598b";
 
   final Stream<QuerySnapshot> collectionStream =
       FirebaseFirestore.instance.collection('myRecipes').snapshots();
   List dataList = [];
-
-  List<dynamic> rec1 = [];
-  List<dynamic> rec2 = [];
-  List<dynamic> rec3 = [];
 
   Future<List<String>> createDataset() async {
     await FirebaseFirestore.instance
@@ -59,6 +53,7 @@ class Recommender {
   }
 
   pantryRecommendation(List<String> input) async {
+    print('triggered!');
     String ings = '';
     await createDataset().then(
       (value) {
@@ -94,6 +89,7 @@ class Recommender {
   }
 
   recommendationBuilder(List<dynamic> input) {
+    print('building...');
     rec1.clear();
     rec1.add('${input[0]['title']}');
     rec1.add('${input[0]['image']}');
