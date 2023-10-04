@@ -16,6 +16,6 @@ The modern culinary landscape is vast and diverse, with countless recipes availa
 
 ## Architecture
 
-The architecture of the Recipe-Recommendation-App is designed to be robust and scalable. It leverages modern technologies and frameworks to ensure a seamless user experience.
+The architecture of the Recipe-Recommendation-App is designed to be robust and scalable. It leverages the Flutter framework, with Dart and Firestore to ensure a seamless user experience accross multiple devices.
 
 The recommendation algorithm is at the heart of the app. It takes into account various factors such as user preferences, dietary restrictions, and available ingredients to provide the most relevant recipe suggestions.
